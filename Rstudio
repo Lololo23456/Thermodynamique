@@ -1,0 +1,63 @@
+library(ggplot2)
+library(knitr)
+library(kableExtra)
+
+#Experience 1
+Temperature <- c(361.15, 348.15, 337.15, 331.15, 327.15, 323.15, 320.15, 317.15, 312.65, 311.15, 308.15)
+Volume <- c(3.1524*10^4, 3.0694*10^4, 2.65464*10^4, 2.4887*10^4, 2.4057*10^4, 2.2398*10^4, 2.0739*10^4, 1.9495*10^4, 1.82507*10^4, 1.7006*10^4, 1.6591*10^4)
+
+# Création du data frame
+data <- data.frame(Temperature, Volume)
+# Création du graphique
+p = ggplot(data = data, aes(x = Temperature, y = Volume)) +
+  geom_point(color = "darksalmon") +
+  labs(title = "Volume(mm3) en fonction de la temperature(Kelvin)") +
+  geom_errorbar(aes(xmin=Temperature-0.5, xmax=Temperature+0.5), color = "darksalmon") +
+  geom_errorbar(aes(ymax=Volume+829.58, ymin=Volume - 829.58), color = "darksalmon") +
+  geom_smooth(data = data, method = "lm", se = FALSE, color = "deeppink")   # Régression linéaire
+head(data)  %>%
+  kable("latex", booktabs = T)%>%
+  kable_styling(latex_options = "striped")
+p
+lm_model <- lm(Volume ~ Temperature, data = data)
+# Nombre d'observations
+cor(Temperature,Volume,use="complete.obs")
+
+
+# Obtenir le résumé du modèle
+summary_modele <- summary(lm_model)
+
+#experience 2
+Pression = c( 81.56, 83.68, 85.39, 86.63, 87.61, 88.29, 89.84, 90.80, 90.76, 92.08, 92.23)
+Volume = c( 1/8295.8, 1/12444, 1/16592, 1/20739, 1/24887, 1/29035, 1/33183, 1/37331, 1/41479, 1/45627, 1/49775)
+data <- data.frame(Pression, Volume)
+
+ggplot(data = NULL, aes(x = Volume, y = Pression)) +
+  geom_point(color="darksalmon") +
+  labs(title = "Pression en fonction de l'inverse du volume") +
+  geom_errorbar(aes(ymax=Pression+0.01, ymin=Pression - 0.01), color = "darksalmon") +
+  geom_smooth(method = "lm", se = FALSE, color = "deeppink")   # Régression linéaire
+
+cor(Pression,Volume,use="complete.obs")
+head(data)  %>%
+  kable("latex", booktabs = T)%>%
+  kable_styling(latex_options = "striped")
+
+#Experience 3
+Hauteur <- c(0.06, 0.049, 0.04, 0.03, 0.02, 0.01)
+PeriodeAuCarré <- c(0.007075, 0.005156, 0.004555, 0.003581, 0.002652, 0.001852)
+
+pu = ggplot(data = NULL, aes(x = PeriodeAuCarré, y = Hauteur)) +
+  geom_point(color = "darksalmon") +
+  labs(title = "Volume en fonction de la temperature") +
+  geom_smooth(method = "lm", se = FALSE, color = "deeppink") +  # Régression linéaire
+  geom_errorbar(aes(ymin=Hauteur-0.001, ymax=Hauteur+0.001), color = "darksalmon") 
+pu
+modele <- lm(Hauteur ~ PeriodeAuCarré)
+
+# Obtenir le résumé du modèle
+summary_modele <- summary(modele)
+
+# Afficher la pente et l'incertitude sur la pente
+print(summary_modele)
+
